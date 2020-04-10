@@ -62,10 +62,10 @@
                     </el-row>
                 </div>
                 <div style="margin-top: 20px">
-                 <!--   <svg-icon icon-class="marker" style="color: #606266"></svg-icon>-->
+                    <!--<svg-icon icon-class="marker" style="color: #606266"></svg-icon>-->
                     <span class="font-small">商品信息</span>
                 </div>
-                <el-table  ref="InstructTable" :data="InstructTable"  style="width: 100%;margin-top: 20px" >
+                <el-table  ref="InstructTable" :data="InstructTable" style="width: 100%;margin-top: 20px" border>
                     <el-table-column label="仪器图片" width="120" align="center">
                         <template slot-scope="scope">
                             <img :src="scope.row.instruct_image" style="height: 80px">
@@ -83,6 +83,8 @@
                     </el-table-column>
                     <el-table-column label="仪器管理人员" width="120" prop="manager" align="center"/>
                 </el-table>
+                <!--添加分页-->
+                <pagination :params="pageParam.page" :parentMethod="getInstructTable"></pagination>
             </div>
         </el-card>
     </div>
@@ -90,12 +92,13 @@
 
 <script>
     import {selectOrderDetails,selectInstructByOrderNo} from "../../../api/request";
+    import pagination from "../../../components/pagination";
     export default {
         name: "index",
         data(){
            return{
                InstructTable:[],//订单下实验仪器信息
-             order:{
+                order:{
                  orderNO:'', //订单号
                  status:'', //订单状态     //显示步骤条
                  submit_time:'',//订单提交的时间
@@ -123,6 +126,10 @@
                    }
                }
            }
+        },
+        //注册组件
+        components:{
+            pagination
         },
         methods:{
             getOrder(){
@@ -156,6 +163,7 @@
                 selectInstructByOrderNo(args).then(res =>{
                     var result =res.data;
                 if (res.code == 0){
+                    console.log("数据:"+JSON.stringify(result))
                     this.InstructTable = result.data;
                 }
                 //添加分页的数据
@@ -204,24 +212,15 @@
         margin: 20px auto;
     }
 
-    .operate-container {
-        background: #F2F6FC;
-        height: 80px;
-        margin: -20px -20px 0;
-        line-height: 80px;
-    }
-
     .operate-button-container {
         float: right;
         margin-right: 20px
     }
-
     .table-layout {
         margin-top: 20px;
         border-left: 1px solid #DCDFE6;
         border-top: 1px solid #DCDFE6;
     }
-
     .table-cell {
         height: 60px;
         line-height: 40px;
