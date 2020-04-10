@@ -90,7 +90,32 @@ const routes = [{
                 meta: {
                     require: true
                 }
-            }]
+            },
+            {
+                path: "/order/details",
+                name: "订单详情",
+                component: () => import('../views/order/details/index'),
+                meta: {
+                    require: true
+                }
+            },
+            {
+                path: "/laboratory/instrument",
+                name: "实验室管理-实验仪器管理",
+                component: ()  => import('../views/laboratory/instruct/index'),
+                meta:{
+                    require: true
+                }
+            },
+            {
+                path: "/laboratory/room",
+                name: "实验室管理-房间管理",
+                component: ()  => import('../views/laboratory/index'),
+                meta:{
+                    require: true
+                }
+            }
+        ]
     }];
 const router = new Router({
     //把定义的路由的跳转加入到Vue的路由中

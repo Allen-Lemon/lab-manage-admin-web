@@ -41,7 +41,6 @@
              this.user.userId =userId;
             //把用户id的当成参数传入
             menu(this.user).then(res =>{
-                console.log("leftnav中的res："+ res);
                 if (res.code == 0){
                     this.allmenu = res.data;
                 }else{

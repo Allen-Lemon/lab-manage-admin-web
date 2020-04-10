@@ -4,7 +4,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 
-//导入图标
+//本地导入图标
 import './assets/icon/iconfont.css'
 Vue.config.productionTip = false
 //导入全局的弹窗提示

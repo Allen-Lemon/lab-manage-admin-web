@@ -12,6 +12,7 @@
     //查看订单
     export default {
         name: "examine"
+
     }
 </script>
 

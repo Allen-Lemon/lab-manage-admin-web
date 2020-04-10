@@ -5,14 +5,16 @@
             <el-breadcrumb-item>用户管理</el-breadcrumb-item>
         </el-breadcrumb>
         <!--stripe：可以设置带斑马纹的表格，更容易区分两行数据-->
-      <el-row style="margin-top: 20px; margin-left: 20px">
-              <el-table :data="tableData" stripe style="width: 100%">
-                  <el-table-column prop="id" label="编号" width="100"></el-table-column>
+
+              <el-table :data="tableData"   highlight-current-row
+                        style="width: 100%" stripe >
+                  <el-table-column type="selection" width="55" />
+                  <el-table-column type="number" label="编号" width="100"></el-table-column>
                   <el-table-column prop="username" label="用户名" width="120"></el-table-column>
                   <el-table-column prop="realName" label="真实姓名" width="150"></el-table-column>
                   <el-table-column prop="promission" label="权限" width="150"></el-table-column>
                   <el-table-column prop="phone" label="手机号" width="180"></el-table-column>
-                  <el-table-column prop="sex" label="性别" width="92"></el-table-column>
+                  <el-table-column prop="sex" label="性别" :formatter="formatSex" width="92"></el-table-column>
                   <el-table-column prop="email" label="邮箱" width="200"></el-table-column>
                   <el-table-column prop="updateTime" label="修改时间" width="240"></el-table-column>
                   <el-table-column label="状态" sortable prop="status"  width="240">
@@ -47,7 +49,6 @@
                       </template>
                   </el-table-column>
               </el-table>
-      </el-row>
         <!--添加分页-->
         <pagination :params="pageParam.page" :parentMethod="getUserData"></pagination>
         <!-- 用户编辑界面 -->
@@ -71,41 +72,38 @@
                            <el-col style="width: 50%">
                                <el-form-item label="性别">
                                    <el-radio-group v-model="editForm.sex">
-                                       <el-radio  label="男">男</el-radio>
-                                       <el-radio  label="女">女</el-radio>
+                                       <el-radio  label="0">男</el-radio>
+                                       <el-radio  label="1">女</el-radio>
                                    </el-radio-group>
                                </el-form-item>
                            </el-col>
                                 <el-col style="width: 50%">
                                     <el-form-item label="状态"  >
                                         <el-radio-group v-model="editForm.status">
-                                            <el-radio  label="激活">激活</el-radio>
-                                            <el-radio  label="禁用">禁用</el-radio>
+                                            <el-radio  label="0">激活</el-radio>
+                                            <el-radio  label="1">禁用</el-radio>
                                         </el-radio-group>
                                     </el-form-item>
                                 </el-col>
                 </el-row>
                 <el-form-item style="margin-bottom: 0;" label="角色" prop="roles">
                     <el-select
-                            v-model="form.roles"
+                            v-model="editForm.roles"
                             style="width: 437px"
                             multiple
                             placeholder="请选择"
-                            @remove-tag="deleteTag"
-                            @change="changeRole"
                     >
                         <el-option
                                 v-for="item in roles"
-                                :key="item.name"
-                                :disabled="level !== 1 && item.level <= level"
-                                :label="item.name"
-                                :value="item.id"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value"
                         />
                     </el-select>
                 </el-form-item>
-
-                </el-form-item>
             </el-form>
+            <!--   @remove-tag="deleteTag"
+                            @change="changeRole"-->
             <div slot="footer" class="dialog-footer">
                 <el-button size="small" @click='closeDialog("edit")'>取消</el-button>
                 <el-button size="small" type="primary" :loading="loading" class="title" @click="submitForm('editForm')">
@@ -113,14 +111,11 @@
                 </el-button>
             </div>
         </el-dialog>
-        <!--给用户配置角色-->
-        <!--配置用户权限-->
-
     </div>
 </template>
 
 <script>
-    import {queryUserData} from "../../api/request";
+    import {queryUserData,querySysAllRole,queryUserHavaRole} from "../../api/request";
     import pagination from "../../components/pagination";
     export default {
         name: "user",
@@ -140,7 +135,8 @@
                     realName: '',
                     phone: '',
                     email: '',
-                    sex: ''
+                    sex: '',
+                    role:[],
                 },
                 //编辑用户在弹出框中添加角色的信息
                 roles:[],
@@ -191,9 +187,25 @@
             //显示编辑界面
             handleEdit: function (index, row) {
                 this.editFormVisible = true
+                //获取系统中所有的角色
+                querySysAllRole(null).then(res => {
+                    //查询所有角色成功
+                    if (res.code == 0){
+                        this.roles =res.data
+                    }else {
+                        console.log("查询所有角色失败")
+                    }
+                });
                 if (row != undefined && row != 'undefined') {
+                //查询当前用户用于的角色
+                    console.log(row)
+                    var args ={userId:  row.uid};
+                    console.log(args)
+                    queryUserHavaRole(args).then(res =>{
+                        console.log(res);
+                    });
                     this.title = '修改用户'
-                    this.editForm.uid = row.uId
+                    this.editForm.uid = row.uid
                     this.editForm.username = row.username
                     this.editForm.realName = row.realName
                     this.editForm.phone = row.phone
@@ -228,18 +240,19 @@
             handleRoleConfig(){
 
             },
-            handleDelete(){}
+            handleDelete(){},
+            //格式化显示性别
+            formatSex(row,index){
+                if (row.sex ==0){
+                    return "男";
+                }else {
+                    return  "女";
+                }
+            }
         }
     }
 </script>
 
 <style scoped>
-      .x-from-sex{
-          width:220px;
-      }
-    .x-from-status{
-        width: 220px;
 
-        float: left;
-    }
 </style>

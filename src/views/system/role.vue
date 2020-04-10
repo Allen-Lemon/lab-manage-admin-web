@@ -14,9 +14,8 @@
                     <!--@selection-change=line-height"selectionChangeHandler"-->
                     <!--  @current-change处理当前选中行的，@selection-change是处理前面勾选的多选-->
                     <el-table    highlight-current-row style="width: 100%;" :data="tableData"  :row-style="{height: 0+ 'px'}" :cell-style="{padding: 0+'px', fontSize:5+'px'}"
-                    @current-change = "handleCurrentChange"
-                    >
-                    <!--    <el-table-column :selectable="checkboxT" type="selection" width="55"/>-->
+                    @current-change = "handleCurrentChange">
+                        <el-table-column type="selection" width="55" />
                         <el-table-column     prop="name" label="名称"/>
                 <!--        <el-table-column     prop="dataScope" label="数据权限"/>-->
                         <el-table-column    prop="code" label="角色权限"/>
@@ -28,11 +27,17 @@
                                 <span>{{ parseTime(scope.row.createTime) }}</span>
                             </template>-->
                         </el-table-column>
-                        <el-table-column  label="操作" width="130px" align="center"
+                        <el-table-column  label="操作" width="300px" align="center"
                                          fixed="right">
                             <template slot-scope="scope">
-                                <el-button size="small" >取消</el-button>
-                                <el-button size="small" type="primary"  class="title" >保存</el-button>
+                                <el-button  class="filter-item"
+                                            size="mini"
+                                            type="primary"
+                                            icon="el-icon-edit" ></el-button>
+                                <el-button  class="filter-item"
+                                            type="danger"
+                                            icon="el-icon-delete"
+                                            size="mini"></el-button>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -122,7 +127,10 @@
         methods: {
             //获取所有角色
             getAllRole(){
-                queryAllRole(null).then(res => {
+                var args =  {pageNumber:this.pageParam.page.pageNumber,
+                    pageSize: this.pageParam.page.pageSize };
+                queryAllRole(args).then(res => {
+                    console.log(JSON.stringify(args))
                     //请求成功
                     if (res.code == 0){
                         //查找的当前数据不为空
