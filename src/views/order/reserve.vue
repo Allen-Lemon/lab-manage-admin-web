@@ -11,15 +11,21 @@
             <el-table-column    prop="tower_room" label="房间号"/>
             <el-table-column    prop="username" label="用户名"/>
             <el-table-column    prop="submit_time" label="订单提交时间"/>
-            <el-table-column    prop="order_status" label="订单状态" :formatter="formatterOrderStatus"/>
+            <el-table-column    prop="order_status" label="订单状态" :formatter="formatterOrderStatus" sortable/>
             <el-table-column    prop="start_time" label="订单开始时间"/>
             <el-table-column    prop="end_time" label="订单结束时间"/>
             <el-table-column  label="操作" width="450px" align="center"
                               fixed="right">
                 <template slot-scope="scope">
-                    <el-button  class="filter-item" size="mini" type="primary" icon="el-icon-zoom-in"  @click="checkOrderDetails(scope.row)">查看</el-button>
-                    <el-button  size="mini" type="success" icon="el-icon-check" >审核通过</el-button>
-                    <el-button  class="filter-item" type="danger" icon="el-icon-delete" size="mini">删除</el-button>
+                    <div v-show="scope.row.order_status == 1">
+                        <el-button  class="filter-item" size="mini" type="primary" icon="el-icon-zoom-in"  @click="checkOrderDetails(scope.row)">查看</el-button>
+                        <el-button  size="mini" type="success" icon="el-icon-check" @click="approveOrder(scope.row)">审核通过</el-button>
+                        <el-button  class="filter-item" type="danger" icon="el-icon-delete" size="mini">删除</el-button>
+                    </div>
+                    <div v-show="scope.row.order_status == 2">
+                        <el-button  class="filter-item" size="mini" type="primary" icon="el-icon-zoom-in"  @click="checkOrderDetails(scope.row)">查看</el-button>
+                        <el-button  class="filter-item" type="danger" icon="el-icon-delete" size="mini" @click="deleteOrder(scope.row)">删除</el-button>
+                    </div>
                 </template>
             </el-table-column>
         </el-table>
@@ -29,7 +35,7 @@
 </template>
 
 <script>
-    import {selectAllOrder} from "../../api/request";
+    import {selectAllOrder,saveApproveOrder} from "../../api/request";
     import pagination  from "../../components/pagination";
     export default {
         name: "reserve",
@@ -100,8 +106,26 @@
              //获取订单号
                // var  orderNo = row.order_no;
                 this.$router.push({path: '/order/details',query:{order: row}})
-            }
+            },
+            approveOrder(row){
+                //获取当前行的订单号
+                var orderNo = row.order_no;
+                var args ={orderNo:orderNo};
+                saveApproveOrder(args).then(res =>{
+                    if (res.code == 0){
+                        //从新加载页面内容
+                        this.getAllOrders();
+                        this.$toast.success({title:"成功提示：",message:"订单审核通过"
+                        });
+                    }else {
+                        this.$toast.error({title:"失败提示：",message: "订单审核数据提交出错，订单未更新"});
+                    }
+                });
+            },
+            //删除订单信息
+            deleteOrder(row){
 
+            }
         }
     }
 </script>

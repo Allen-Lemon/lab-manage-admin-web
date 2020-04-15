@@ -37,3 +37,5 @@ export  const  selectAllOrder = (params) => {return query('get','/api/order/sele
 export const  selectOrderDetails =(params) => {return query('get','/api/order/selectOrderDetails',params)}
 //根据订单号查询订单使用的仪器
 export const  selectInstructByOrderNo = (params) => {return query('get','/api/order/selectInstruct',params)}
+//通过审核，修改订单的状态
+export const  saveApproveOrder = (params) => {return submit('post','/api/order/saveApproveOrder',params)}
