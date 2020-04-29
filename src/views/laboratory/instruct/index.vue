@@ -1,8 +1,12 @@
 <template>
     <div>
+        <el-breadcrumb separator-class="el-icon-arrow-right" style="margin-left: 20px;margin-top: 20px">
+            <el-breadcrumb-item :to="{path: '/index'}">首页</el-breadcrumb-item>
+            <el-breadcrumb-item>实验仪器管理</el-breadcrumb-item>
+        </el-breadcrumb>
         <el-row  style="margin-left: 10px; margin-top: 25px " :gutter="20">
         <!--实验室类型管理-->
-        <el-col :xs="24" :sm="24" :md="9" :lg="9" :xl="8">
+        <el-col :xs="20" :sm="20" :md="11" :lg="11" :xl="9">
             <el-card class="box-card" >
                 <div slot="header" class="clearfix">
                     <span>实验类型</span>
@@ -38,7 +42,7 @@
                 </el-table>
              </el-card>
          </el-col>
-                <el-col  :xs="24" :sm="24" :md="16" :lg="16" :xl="15" style="margin-bottom: 10px">
+                <el-col  :xs="24" :sm="24" :md="10" :lg="13" :xl="15" style="margin-bottom: 10px">
                     <el-card>
                         <div slot="header" class="clearfix">
                             <span class="role-span">仪器列表</span>

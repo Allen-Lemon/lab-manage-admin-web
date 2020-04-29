@@ -2,7 +2,11 @@
 <template>
         <!--collapse-transition开启折叠动画,collapse是否把菜单折叠起来（默认是否） router :default-active="$route.path"-->
         <el-menu :collapse="isCollapsed" router :default-active="$route.path"  class="el-menu-vertical-demo" collapse-transition unique-opened  background-color="#2f2f35" text-color="#bec936" active-text-color="#fed71a">
-                <el-submenu v-for = "menu in allmenu" :key="menu.resourceId" :index="menu.name">
+            <el-menu-item index="/index">
+                <i class="el-icon-menu"></i>
+                <span slot="title">首页</span>
+            </el-menu-item>
+            <el-submenu v-for = "menu in allmenu" :key="menu.resourceId" :index="menu.name">
                     <template slot="title">
                         <i class="iconfont" :class="menu.icon"></i>
                         <span>{{menu.name}}</span>

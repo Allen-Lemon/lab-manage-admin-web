@@ -19,7 +19,7 @@ const routes = [{
     path: '/',
     name: '登录',
     hidden: true,
-    component: () => import('../views/Dashboard'),//为了方便，后续会改回来
+    component: () => import('../views/login'),//为了方便，后续会改回来
     meta: {
         require: false
     }
@@ -50,7 +50,15 @@ const routes = [{
         meta: {
             require: true
         },
-        children: [{
+          children: [{
+            path: '/index',
+              name: "主页",
+              component: () => import('../views/Dashboard'),
+              meta: {
+                require: true
+              }
+          },
+              {
             path: '/system/user',
             name: "用户管理",
             component: () => import('../views/system/user'),
@@ -114,7 +122,15 @@ const routes = [{
                 meta:{
                     require: true
                 }
-            }
+            },
+              {
+                  path: "/experiment/course",
+                  name: "实验课程",
+                  component: () => import('../views/experiment/course'),
+                  meta: {
+                      require: true
+                  }
+              }
         ]
     }];
 const router = new Router({

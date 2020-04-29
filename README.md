@@ -49,3 +49,7 @@ github地址: https://github.com/chengxulvtu/cxlt-vue2-toastr/
 ```
 npm install  qs -S
 ```
+### 添加less的css解析
+```js
+npm i less less-loader -S
+```

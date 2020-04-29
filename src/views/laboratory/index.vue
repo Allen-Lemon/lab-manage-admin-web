@@ -49,7 +49,7 @@
              </div>
          </el-dialog>
          <!--添加操作按钮-->
-         <div style="width: 25%;margin-left: 5px;margin-top: 5px ;margin-bottom: 5px">
+         <div style="width: 30%;margin-left: 5px;margin-top: 25px ;margin-bottom: 15px">
              <el-button
                      class="filter-item"
                      size="mini"
