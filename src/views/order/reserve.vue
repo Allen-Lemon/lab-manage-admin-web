@@ -4,16 +4,34 @@
             <el-breadcrumb-item :to="{path: '/index'}">首页</el-breadcrumb-item>
             <el-breadcrumb-item>预约订单</el-breadcrumb-item>
         </el-breadcrumb>
+
+        <!--添加操作按钮-->
+        <div style="width: 15%;margin-left: 5px;margin-top: 25px ;margin-bottom: 15px">
+            <el-button
+                    slot="reference"
+                    class="filter-item"
+                    type="danger"
+                    icon="el-icon-delete"
+                    size="mini">
+                删除
+            </el-button>
+            <el-button
+                    class="filter-item"
+                    size="mini"
+                    type="warning"
+                    icon="el-icon-download">导出</el-button>
+        </div>
+
         <el-table    highlight-current-row style="width: 100%;" :data="tableData"  :row-style="{height: 0+ 'px'}" :cell-style="{padding: 10+'px', fontSize:5+'px'}">
             <el-table-column type="selection" width="55" />
-            <el-table-column     prop="order_no" label="订单号"/>
-            <el-table-column    prop="name" label="实验订单名称"/>
+            <el-table-column :show-overflow-tooltip="true"     prop="order_no" label="订单号"/>
+            <el-table-column :show-overflow-tooltip="true"   prop="name" label="实验订单名称"/>
             <el-table-column    prop="tower_room" label="房间号"/>
             <el-table-column    prop="username" label="用户名"/>
-            <el-table-column    prop="submit_time" label="订单提交时间"/>
+            <el-table-column :show-overflow-tooltip="true"   prop="submit_time" label="订单提交时间"/>
             <el-table-column    prop="order_status" label="订单状态" :formatter="formatterOrderStatus" sortable/>
-            <el-table-column    prop="start_time" label="订单开始时间"/>
-            <el-table-column    prop="end_time" label="订单结束时间"/>
+            <el-table-column :show-overflow-tooltip="true"   prop="start_time" label="订单开始时间"/>
+            <el-table-column :show-overflow-tooltip="true"   prop="end_time" label="订单结束时间"/>
             <el-table-column  label="操作" width="450px" align="center"
                               fixed="right">
                 <template slot-scope="scope">
@@ -73,11 +91,13 @@
         },
         methods:{
             getAllOrders(){
-                var args = this.forms;
-                selectAllOrder(args).then(res =>{
+                var params ={pageNumber: this.pageParam.page.pageNumber,
+                    pageSize: this.pageParam.page.pageSize};
+                selectAllOrder(params).then(res =>{
                     if (res.code == 0){
                         var result = res.data;
                         if (result.count > 0){
+                            console.log("數據："+JSON.stringify(result.data))
                             this.tableData =result.data;
                         }
                         //配置分页参数

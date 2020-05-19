@@ -4,15 +4,38 @@
             <el-breadcrumb-item :to="{path: '/index'}">首页</el-breadcrumb-item>
             <el-breadcrumb-item>用户管理</el-breadcrumb-item>
         </el-breadcrumb>
-        <!--stripe：可以设置带斑马纹的表格，更容易区分两行数据-->
 
+        <!--添加操作按钮-->
+        <div style="width: 23%;margin-left: 5px;margin-top: 25px ;margin-bottom: 15px">
+            <el-button
+                    class="filter-item"
+                    size="mini"
+                    type="success"
+                    icon="el-icon-edit">
+                修改
+            </el-button>
+            <el-button
+                    slot="reference"
+                    class="filter-item"
+                    type="danger"
+                    icon="el-icon-delete"
+                    size="mini">
+                删除
+            </el-button>
+            <el-button
+                    class="filter-item"
+                    size="mini"
+                    type="warning"
+                    icon="el-icon-download">导出</el-button>
+        </div>
+
+        <!--stripe：可以设置带斑马纹的表格，更容易区分两行数据-->
               <el-table :data="tableData"   highlight-current-row
                         style="width: 100%" stripe >
                   <el-table-column type="selection" width="55" />
                   <el-table-column type="number" label="编号" width="100"></el-table-column>
                   <el-table-column prop="username" label="用户名" width="120"></el-table-column>
                   <el-table-column prop="realName" label="真实姓名" width="150"></el-table-column>
-                  <el-table-column prop="promission" label="权限" width="150"></el-table-column>
                   <el-table-column prop="phone" label="手机号" width="180"></el-table-column>
                   <el-table-column prop="sex" label="性别" :formatter="formatSex" width="92"></el-table-column>
                   <el-table-column prop="email" label="邮箱" width="200"></el-table-column>
@@ -26,25 +49,19 @@
                                   @change="userStatusChange(scope.$index,scope.row)"/>
                       </template>
                   </el-table-column>
-                  <el-table-column label="操作" width="285">
+                  <el-table-column label="操作" width="150">
                       <template slot-scope="scope">
                           <el-button
                                   size="small"
                                   type="default"
                                   icon="el-icon-edit"
-                                  @click="handleEdit(scope.$index,scope.row)">编辑
-                          </el-button>
-                          <el-button
-                                  size="small"
-                                  type="info"
-                                  icon="el-icon-setting"
-                                  @click="handleRoleConfig(scope.$index, scope.row)">配置角色
+                                  @click="handleEdit(scope.$index,scope.row)">
                           </el-button>
                           <el-button
                                   size="small"
                                   type="danger"
                                   icon="el-icon-delete-solid"
-                                  @click="handleDelete(scope.$index, scope.row)">删除
+                                  @click="handleDelete(scope.$index, scope.row)">
                           </el-button>
                       </template>
                   </el-table-column>

@@ -47,7 +47,9 @@
                             <div class="grid-content grid-con-2">
                                 <i class="el-icon-lx-notice grid-con-icon"></i>
                                 <div class="grid-cont-right">
-                                    <div class="grid-num">321</div>
+                                    <div class="grid-num">
+                                        <countTo :startVal='startVal' :endVal='endVal' :duration='3000'></countTo>
+                                    </div>
                                     <div>系统消息</div>
                                 </div>
                             </div>
@@ -112,10 +114,13 @@
 <script>
 /*import Schart from 'vue-schart';
 import bus from '../common/bus';*/
+import countTo from 'vue-count-to';
 export default {
     name: 'dashboard',
     data() {
         return {
+            startVal: 0,
+            endVal: 2017,
             name: localStorage.getItem('ms_username'),
             todoList: [
                 {
@@ -218,9 +223,10 @@ export default {
             }
         };
     },
-    /*components: {
-        Schart
-    },*/
+    components: {
+        /*Schart*/
+        countTo
+    },
     computed: {
         role() {
             return this.name === 'admin' ? '超级管理员' : '普通用户';

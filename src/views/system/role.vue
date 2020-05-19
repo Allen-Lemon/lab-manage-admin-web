@@ -10,18 +10,25 @@
                 <el-card class="box-card" shadow="never">
                     <div slot="header" class="clearfix">
                         <span class="role-span">角色列表</span>
+                        <el-button
+                                class="filter-item"
+                                size="mini"
+                                style="float: right;padding: 4px 10px"
+                                type="primary"
+                                icon="el-icon-plus"
+                                @click="addRole">新增</el-button>
                     </div>
                     <!--@selection-change=line-height"selectionChangeHandler"-->
                     <!--  @current-change处理当前选中行的，@selection-change是处理前面勾选的多选-->
                     <el-table    highlight-current-row style="width: 100%;" :data="tableData"  :row-style="{height: 0+ 'px'}" :cell-style="{padding: 0+'px', fontSize:5+'px'}"
                     @current-change = "handleCurrentChange">
                         <el-table-column type="selection" width="55" />
-                        <el-table-column     prop="name" label="名称"/>
+                        <el-table-column   prop="name" label="名称"/>
                 <!--        <el-table-column     prop="dataScope" label="数据权限"/>-->
                         <el-table-column    prop="code" label="角色权限"/>
                         <el-table-column    prop="level" label="角色级别"/>
                     <!--    <el-table-column    :show-overflow-tooltip="true" prop="remark" label="描述"/>-->
-                        <el-table-column    :show-overflow-tooltip="true" width="135px"
+                        <el-table-column   :show-overflow-tooltip="true" width="135px"
                                          prop="createTime" label="创建日期">
                      <!--       <template slot-scope="scope">
                                 <span>{{ parseTime(scope.row.createTime) }}</span>
@@ -33,11 +40,13 @@
                                 <el-button  class="filter-item"
                                             size="mini"
                                             type="primary"
-                                            icon="el-icon-edit" ></el-button>
+                                            icon="el-icon-edit"
+                                            @click="updateRole(scope.row)"></el-button>
                                 <el-button  class="filter-item"
                                             type="danger"
                                             icon="el-icon-delete"
-                                            size="mini"></el-button>
+                                            size="mini"
+                                            @click="deleteRole(scope.row)"></el-button>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -78,11 +87,35 @@
                 </el-card>
             </el-col>
         </el-row>
+
+        <!-- 添加实验仪器的模态框 -->
+        <el-dialog :title="roleTitle" :visible.sync="addRoleVisible" width="30%" @click='closeAddRoleDialog'>
+            <el-form label-width="80px" ref="addRoleForm" :model="addRoleForm" :rules="rules">
+                <el-form-item label="名称" prop="name">
+                    <el-input size="small" v-model="addRoleForm.name" auto-complete="off"
+                              placeholder="请输入角色名称"></el-input>
+                </el-form-item>
+                <el-form-item label="编码" prop="code">
+                    <el-input size="small" v-model="addRoleForm.code" auto-complete="off"
+                              placeholder="请输入角色编码"></el-input>
+                </el-form-item>
+                <el-form-item label="等级" prop="level">
+                    <el-input size="small" v-model="addRoleForm.level" auto-complete="off"
+                              placeholder="请输入角色等级"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button size="small" type="primary" class="title" @click="submitRoleForm('addRoleForm')">
+                    保存
+                </el-button>
+                <el-button size="small" @click='closeAddRoleDialog'>取消</el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
 <script>
-    import  {queryAllRole,queryAllResource,selectedMenu,addRoleAuth} from "../../api/request";
+    import  {queryAllRole,queryAllResource,selectedMenu,addRoleAuth,addOrUpdateRoleInfo} from "../../api/request";
     import pagination  from "../../components/pagination";
     export default {
         name: "role",
@@ -100,8 +133,20 @@
                                   children: "children",
                                   label: "name"
                               },
-                           //存储当前角色的id
-                           roleId: null,
+                           addRoleForm:{
+                               name: '',
+                               code: '',
+                               level: ''
+                           },
+                           rules: {
+                               name: [{ required: true, message: '请输入角色名称', trigger: 'blur' }],
+                               code:[{ required: true, message: '请输入角色编码', trigger: 'blur'}],
+                               level:[{ required: true, message: '请输入角色等级', trigger: 'blur'}]
+                           },
+                           roleTitle:'', //添加角色的标题
+                           addRoleVisible:false,
+                               //存储当前角色的id
+                               roleId: null,
                                //分页的参数
                                pageParam: {
                                                page: {
@@ -209,6 +254,51 @@
                         })
                     }
                 })
+            },
+            //添加角色
+            addRole(){
+                this.roleTitle = "添加角色";
+                this.addRoleVisible = true;
+                this.addRoleForm.name = '';
+                this.addRoleForm.code = '';
+                this.addRoleForm.level = '';
+            },
+            //关闭弹出框
+            closeAddRoleDialog(){
+                this.addRoleVisible = false;
+            },
+            //提交添加的角色
+            submitRoleForm(form){
+                this.$refs[form].validate((valid) =>{
+                    if (valid){
+                        var params = this.addRoleForm;
+                        addOrUpdateRoleInfo(params).then(res => {
+                            var info = res.message;
+                            if (res.code == 0){
+                                this.$toast.success({title:"成功提示",message: info});
+                                this.addRoleVisible = false;
+                                this.getAllRole();
+                            }else {
+                                this.$toast.error({title:"",me})
+                                this.$toast.error({title:"失败提示",message: info});
+                            }
+                        });
+                    }else {
+                        this.$toast.info({title:"信息提示",message:"需要填写完页面数据"});
+                    }
+                });
+
+            },
+            //修改角色信息
+            updateRole(row){
+                this.addRoleVisible = true;
+                this.roleTitle = "修改角色信息";
+                this.addRoleForm.name = row.name;
+                this.addRoleForm.code = row.code;
+                this.addRoleForm.level = row.level;
+            },
+            deleteRole(index){
+
             }
         }
     }
@@ -228,5 +318,8 @@
     }
     element.style{
         margin-right: 5px;
+    }
+    .el-form-item__content {
+        margin-left: 90px;
     }
 </style>

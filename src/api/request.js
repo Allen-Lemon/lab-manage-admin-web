@@ -21,6 +21,8 @@ export const  queryAllResource = (params) => {return req('get','/api/role/select
 export  const  selectedMenu = (params) => {return query('get','/api/role/selectedMenu',params)}
 //角色赋值权限以后，提交到后端
 export  const  addRoleAuth = (params) => {return submit('post','/api/role/addRoleOfAuth',params)}
+//添加或者更新角色信息
+export const addOrUpdateRoleInfo =(params) => {return submit('post','/api/role/addRoleInfo',params)}
 //实验室管理======实验室房间管理-查找实验室房间
 export  const  selectLaboratoryRoom = (params) =>{return query('get','/api/labsRoom/index',params)}
 //查询所有的实验室的实验类型
@@ -39,3 +41,13 @@ export const  selectOrderDetails =(params) => {return query('get','/api/order/se
 export const  selectInstructByOrderNo = (params) => {return query('get','/api/order/selectInstruct',params)}
 //通过审核，修改订单的状态
 export const  saveApproveOrder = (params) => {return submit('post','/api/order/saveApproveOrder',params)}
+//课程管理==查询所有的课程
+export const selectAllCourse = (params) => {return query('get','/api/courseManager/selectAllCourse',params)}
+//课程添加
+export const addCourseInfo = (params) => {return submit('post','/api/courseManager/addCourseInfo',params)}
+//实验室上查询课程信息
+export const selectCourseInfoByLabType =(param) => {return query('get','/api/courseManager/selectCourseInfo',param)}
+//实验室上添加课程信息
+export const addCourseInfoByLab = (param) => {return submit('post','/api/courseManager/addCourseInfoByLab',param)}
+
+

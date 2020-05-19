@@ -13,7 +13,7 @@
                 <i class="el-icon-warning color-danger" style="margin-left: 20px"></i>
                 <span class="color-danger">当前订单状态：{{order.status | formatStatus}}</span>
                 <div class="operate-button-container" v-show="order.status===1">
-                    <el-button size="mini" >通过审核</el-button>
+                    <el-button size="mini" @click="approveOrder">通过审核</el-button>
                     <el-button size="mini">不通过审核</el-button>
                 </div>
                 <div class="operate-button-container" v-show="order.status===2 || order.status===3">
@@ -32,7 +32,7 @@
                         <el-col :span="4" class="table-cell-title">预约位置个数</el-col>
                         <el-col :span="4" class="table-cell-title">实验开始时间</el-col>
                         <el-col :span="4" class="table-cell-title">实验结束时间</el-col>
-                        <el-col :span="4" class="table-cell-title">实验类型类型</el-col>
+                        <el-col :span="4" class="table-cell-title">实验类型</el-col>
                     </el-row>
                     <el-row>
                         <el-col :span="4" class="table-cell">{{order.orderNO}}</el-col>
@@ -91,7 +91,7 @@
 </template>
 
 <script>
-    import {selectOrderDetails,selectInstructByOrderNo} from "../../../api/request";
+    import {selectOrderDetails, selectInstructByOrderNo, saveApproveOrder} from "../../../api/request";
     import pagination from "../../../components/pagination";
     export default {
         name: "index",
@@ -105,7 +105,7 @@
                  audit_time:'', //订单审核的时间
                  complete_time:'',//订单完成的时间
                  tower:'', //实验房间
-                 seatNumber:'',//预约的走位个数
+                 seatNumber:'',//预约的位置个数
                  startTime:'',//实验开始时间
                  endTime:'',//实验结束时间
                  labType:'',//实验类型
@@ -143,6 +143,9 @@
                 this.order.startTime = order.start_time;
                 this.order.endTime = order.end_time;
                 this.order.orderName =order.name;
+                //根据实验订单查询实验使用的位置数据实验类型
+                var param ={orderNo:order.order_no};
+
             },
             selectOrderDetailsByOrderNo(){
                 //用订单编号查询订单详情
@@ -154,6 +157,8 @@
                       this.userInfo.realName = result.userInfo.real_name;
                       this.userInfo.phone =result.userInfo.phone;
                       this.userInfo.email = result.userInfo.email;
+                      this.order.labType = result.userInfo.lab_type;
+                      this.order.seatNumber =result.seatInfo;
                     }
                 });
             },
@@ -176,6 +181,22 @@
                 if (time == null || time === '') {
                     return '';
                 }
+            },
+            //通过审核
+            approveOrder(){
+                //获取当前行的订单号
+                var orderNo = this.order.orderNO;
+                var args ={orderNo:orderNo};
+                saveApproveOrder(args).then(res =>{
+                    if (res.code == 0){
+                        //从新加载页面内容
+                        this.order.status = 2;
+                        this.$toast.success({title:"成功提示：",message:"订单审核通过"});
+
+                    }else {
+                        this.$toast.error({title:"失败提示：",message: "订单审核数据提交出错，订单未更新"});
+                    }
+                });
             }
         },
         filters:{

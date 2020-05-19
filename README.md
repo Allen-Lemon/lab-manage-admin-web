@@ -53,3 +53,7 @@ npm install  qs -S
 ```js
 npm i less less-loader -S
 ```
+### 添加数字滚动增加
+```js
+npm install -g npm 
+```

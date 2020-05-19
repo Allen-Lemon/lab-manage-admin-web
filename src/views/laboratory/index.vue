@@ -19,15 +19,15 @@
                      <el-input size="small" v-model="form.room_number" auto-complete="off"
                                placeholder="请输入实验室房间号"></el-input>
                  </el-form-item>
-                 <el-form-item label="实验类型" prop="lab_type">
+                 <el-form-item label="类型" prop="lab_type">
                      <el-input size="small" v-model="form.lab_type" auto-complete="off"
                                placeholder="请选择实验室类型"></el-input>
                  </el-form-item>
-                 <el-form-item label="实验室行" prop="row" >
+                 <el-form-item label="行数" prop="row" >
                      <el-input size="small" v-model="form.row" auto-complete="off"
                                placeholder="请输入实验楼"></el-input>
                  </el-form-item>
-                 <el-form-item label="实验室列" prop="col">
+                 <el-form-item label="列数" prop="col">
                      <el-input size="small" v-model="form.col" auto-complete="off"
                                placeholder="实验室房间号"></el-input>
                  </el-form-item>
@@ -108,35 +108,95 @@
                      </el-form>
                  </template>
              </el-table-column>
-             <el-table-column label="实验室" prop="tower"></el-table-column>
-             <el-table-column label="实验类型" prop="lab_type" :formatter="formatterType" sortable></el-table-column>
-             <el-table-column label="实验室地址" prop="lab_address"></el-table-column>
-             <el-table-column label="实验室开放时间" prop="open_time"></el-table-column>
-             <el-table-column label="实验室负责人" prop="manager"></el-table-column>
-             <el-table-column label="实验室状态" prop="status" :formatter="formatterStatus" sortable></el-table-column>
-             <el-table-column label="创建时间" prop="create_time" sortable></el-table-column>
-             <el-table-column label="操作" width="150px">
+             <el-table-column label="实验室" prop="tower" width="100px"></el-table-column>
+             <el-table-column label="实验类型" prop="lab_type" :formatter="formatterType" sortable width="120px"></el-table-column>
+             <el-table-column label="实验室地址" prop="lab_address" width="160px" :show-overflow-tooltip="true"></el-table-column>
+             <el-table-column label="实验室开放时间" prop="open_time" width="170px" :show-overflow-tooltip="true"></el-table-column>
+             <el-table-column label="实验室负责人" prop="manager" width="120px"></el-table-column>
+             <el-table-column label="实验室状态" prop="status" :formatter="formatterStatus" sortable width="140px"></el-table-column>
+             <el-table-column label="创建时间" prop="create_time" width="160px" sortable :show-overflow-tooltip="true"></el-table-column>
+             <el-table-column label="操作" width="460px">
                  <template slot-scope="scope">
                      <el-button  class="filter-item"
                                  size="mini"
                                  type="primary"
                                  icon="el-icon-edit"
-                                 @click="handleEditFrom(scope.$index,scope.row)"></el-button>
+                                 @click="handleEditFrom(scope.$index,scope.row)">修改</el-button>
+                     <el-button  class="filter-item"
+                                 size="mini"
+                                 type="primary"
+                                 icon="el-icon-edit"
+                                 @click="addCourse(scope.row)">添加课程</el-button>
+                     <el-button  class="filter-item"
+                                 size="mini"
+                                 type="primary"
+                                 icon="el-icon-edit"
+                                 @click="handleEditFrom(scope.$index,scope.row)">查看课程</el-button>
                      <el-button  class="filter-item"
                                  type="danger"
                                  icon="el-icon-delete"
                                  size="mini"
-                                 @click="handleDeleteFrom(scope.$index,scope.row)"></el-button>
+                                 @click="handleDeleteFrom(scope.$index,scope.row)">删除</el-button>
                  </template>
              </el-table-column>
          </el-table>
          <!--添加分页-->
          <pagination :params="pageParam.page" :parentMethod="getLaboratoryRoom"></pagination>
+         <!-- 实验室添加课程 -->
+         <el-dialog :title="titles" :visible.sync="addCourseInfo" width="30%" @click='closeAddTypeDialog'>
+             <el-form label-width="80px" ref="addCourseForm" :model="addCourseForm" :rules="courseRules">
+                 <el-form-item label="实验室" prop="tower_room">
+                     <el-input size="small" v-model="addCourseForm.tower_room" auto-complete="off"
+                               placeholder="请输入实验室类型"></el-input>
+                 </el-form-item>
+                 <el-form-item label="课程" prop="course_id">
+                     <el-select v-model="addCourseForm.course_id" clearable placeholder="请选择">
+                         <el-option
+                                 v-for="item in courseInfo"
+                                 :key="item.id"
+                                 :label="item.name"
+                                 :value="item.id"
+                                 auto-complete="off">
+                         </el-option>
+                     </el-select>
+                 </el-form-item>
+                 <el-form-item label="课程开始时间" prop="startTime">
+                     <el-date-picker
+                             v-model="addCourseForm.startTime"
+                             type="datetime"
+                             placeholder="选择课程开始日期时间"
+                             value-format="yyyy-MM-dd HH:mm:ss"
+                             default-time="09:00:00"
+                             auto-complete="off">
+                     </el-date-picker>
+                 </el-form-item>
+                 <el-form-item label="课程结束时间" prop="endTime">
+                     <el-date-picker
+                             v-model="addCourseForm.endTime"
+                             type="datetime"
+                             placeholder="选择课程结束日期时间"
+                             value-format="yyyy-MM-dd HH:mm:ss"
+                             default-time="18:00:00"
+                             auto-complete="off">
+                     </el-date-picker>
+                 </el-form-item>
+                 <el-form-item label="班级" prop="class">
+                     <el-input size="small" v-model="addCourseForm.class" auto-complete="off"
+                               placeholder="请输入实验班级"></el-input>
+                 </el-form-item>
+             </el-form>
+             <div slot="footer" class="dialog-footer">
+                 <el-button size="small" type="primary" class="title" @click="submitCourseInfoForm('addCourseForm')">
+                     保存
+                 </el-button>
+                 <el-button size="small" @click='closeAddTypeDialog'>取消</el-button>
+             </div>
+         </el-dialog>
      </div>
 </template>
 
 <script>
-    import {selectLaboratoryRoom,saveLaboratoryData} from "../../api/request";
+    import {selectLaboratoryRoom,saveLaboratoryData,selectCourseInfoByLabType,addCourseInfoByLab} from "../../api/request";
     //引入分页组件
   import pagination from "../../components/pagination";
     export default {
@@ -154,6 +214,17 @@
                 //添加实验室，显示行列
                 addLaboratory: false,
                 titles: '',
+                addCourseInfo: false,
+                courseInfo:[], //课程信息
+                //添加课程的from
+                addCourseForm:{
+                    tower_room:'',
+                    lab_room_id:'',
+                    course_id:'',
+                    startTime:'',
+                    endTime:'',
+                    class:''
+                },
                 //表单数据
                 form: {
                     id:'',
@@ -186,6 +257,13 @@
                     lab_address:[{ required: true, message: '请输入实验室地址', trigger: 'blur'}],
                     open_time:[{ required: true, message: '请输入实验室开放时间', trigger: 'blur'}],
                     manager:[{ required: true, message: '请输入实验室负责人', trigger: 'blur'}]
+                },
+                courseRules:{
+                    tower_room: [{ required: true, message: '请输入实验室', trigger: 'blur' }],
+                    course_id:[{ required: true, message: '请选择课程', trigger: 'blur'}],
+                    startTime:[{ required: true, message: '请选择课程开始时间', trigger: 'blur'}],
+                    endTime:[{ required: true, message: '请选择课程结束时间', trigger: 'blur'}],
+                    class:[{ required: true, message: '请输入实验班级', trigger: 'blur'}]
                 }
             }
         },
@@ -204,7 +282,6 @@
                 selectLaboratoryRoom(ages).then(res =>{
                 //请求成功
                     if (res.code == 0){
-                        console.log(JSON.stringify(res.data))
                         var result = res.data;
                         if (result.count  > 0){
                             //请求的数据加入带vue中渲染
@@ -275,6 +352,44 @@
                 });
 
             },
+            //添加课程
+            addCourse(row){
+              this.addCourseInfo = true;
+              this.addCourseForm.lab_room_id = row.id;
+              this.addCourseForm.tower_room= row.tower;
+              this.addCourseForm.course_id ="";
+              this.addCourseForm.class ="";
+              this.addCourseForm.startTime="";
+              this.addCourseForm.endTime="";
+              var args = {labType: row.lab_type}
+                selectCourseInfoByLabType(args).then(res =>{
+                    if (res.code == 0){
+                        this.courseInfo = res.data;
+                    }
+                });
+            },
+            //提交课程信息
+            submitCourseInfoForm(addCourseForm){
+                this.$refs[addCourseForm].validate((valid) =>{
+                    if (valid){
+                        var args={courseId: this.addCourseForm.course_id,layRoomId: this.addCourseForm.lab_room_id,
+                            classInfo: this.addCourseForm.class,startTime: this.addCourseForm.startTime,endTime: this.addCourseForm.endTime};
+                        addCourseInfoByLab(args).then(res => {
+                            if (res.code == 0) {
+                                this.$toast.success({title:"成功提示",message:"提交的实验室课程信息成功"});
+                            }else {
+                                this.$toast.error({title:"错误提示",message:"提交的实验室课程信息失败"});
+                            }
+                        });
+                    }else {
+                        this.$toast.error({title:"错误提示",message:"需要填写完页面数据"});
+                    }
+                })
+            },
+            //关闭添加课程的模态框
+            closeAddTypeDialog(){
+                this.addCourseInfo = false;
+            },
             //格式化表格中实验类型的参数
             formatterType(rows,index){
                 if (rows.lab_type == 1){
@@ -315,5 +430,7 @@
     }
 </style>
 <style scoped>
-
+    .el-date-editor.el-input, .el-date-editor.el-input__inner,.el-select{
+        width: 100%;
+    }
 </style>
